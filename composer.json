@@ -1,0 +1,19 @@
+{
+    "name": "maddoger/yii2-textformats",
+    "type": "yii2-extension",
+    "description": "Text formats extension for Yii2.",
+    "authors": [
+        {
+            "name": "Vitaliy Syrchikov",
+            "email": "maddoger@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "maddoger\\textformats\\": ""
+        }
+    }
+}
