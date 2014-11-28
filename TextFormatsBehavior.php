@@ -35,9 +35,9 @@ class TextFormatsBehavior extends Behavior
     public $textEditorWidgetOptions = [];
 
     /**
-     * @var array
+     * @var string default: html
      */
-    public $changeFormatUrl = ['textformats/change-format/index'];
+    public $defaultTextFormat;
 
     /**
      * @param \yii\base\Component $owner
@@ -59,8 +59,21 @@ class TextFormatsBehavior extends Behavior
                 ],
                 'html' => [
                     'label' => 'HTML',
+                    'default' => true,
                 ],
             ];
+        }
+
+        if (!$this->defaultTextFormat) {
+            foreach ($this->textFormats as $id=>$format) {
+                if (!$this->defaultTextFormat) {
+                    $this->defaultTextFormat = $id;
+                }
+                if (isset($format['default']) && $format['default']) {
+                    $this->defaultTextFormat = $id;
+                    break;
+                }
+            }
         }
     }
 }
