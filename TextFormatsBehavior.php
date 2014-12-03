@@ -76,4 +76,31 @@ class TextFormatsBehavior extends Behavior
             }
         }
     }
+
+    /**
+     * @param string $format
+     * @return array|null
+     */
+    public function getTextFormatInfo($format)
+    {
+        if (isset($this->textFormats[$format])) {
+            return $this->textFormats[$format];
+        }
+        return null;
+    }
+
+    /**
+     * @param string $format
+     * @param string $text
+     * @return string
+     */
+    public function getFormattedText($format, $text)
+    {
+        $text = trim($text);
+        $format = $this->getTextFormatInfo($format);
+        if ($format && isset($format['formatter']) && $format['formatter'] instanceof \Closure) {
+            return $format['formatter']($text);
+        }
+        return $text;
+    }
 }
