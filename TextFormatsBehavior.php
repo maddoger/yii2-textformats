@@ -23,7 +23,7 @@ class TextFormatsBehavior extends Behavior
      * Each item is format. Key is format id, value is format description.
      * Description fields:
      * `label` - format label;
-     * `formatter` - source to html Closure `string function($model, $language=null)`. If is null, copy will be used;
+     * `formatter` - source to html Closure `string function($model, $language)`. If is null, copy will be used;
      * `widgetClass` - widget class for editor
      * `widgetOptions` - widget options
      */
