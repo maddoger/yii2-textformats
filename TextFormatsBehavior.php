@@ -23,7 +23,7 @@ class TextFormatsBehavior extends Behavior
      * Each item is format. Key is format id, value is format description.
      * Description fields:
      * `label` - format label;
-     * `formatter` - source to html Closure `string function($model)`. If is null, copy will be used;
+     * `formatter` - source to html Closure `string function($model, $language=null)`. If is null, copy will be used;
      * `widgetClass` - widget class for editor
      * `widgetOptions` - widget options
      */
@@ -53,7 +53,7 @@ class TextFormatsBehavior extends Behavior
             $this->textFormats = [
                 'text' => [
                     'label' => 'Text',
-                    'formatter' => function ($text) {
+                    'formatter' => function ($text, $language) {
                         return Yii::$app->formatter->asNtext($text);
                     }
                 ],
@@ -92,14 +92,18 @@ class TextFormatsBehavior extends Behavior
     /**
      * @param string $format
      * @param string $text
+     * @param string $language
      * @return string
      */
-    public function getFormattedText($format, $text)
+    public function getFormattedText($format, $text, $language=null)
     {
         $text = trim($text);
         $format = $this->getTextFormatInfo($format);
         if ($format && isset($format['formatter']) && $format['formatter'] instanceof \Closure) {
-            return $format['formatter']($text);
+            if (!$language) {
+                $language = Yii::$app->language;
+            }
+            return call_user_func($format['formatter'], $text, $language);
         }
         return $text;
     }
