@@ -22,9 +22,9 @@ use yii\widgets\InputWidget;
 class FormatDropdown extends InputWidget
 {
     /**
-     * @var \yii\base\Module
+     * @var \yii\base\Object
      */
-    public $module;
+    public $context;
 
     /**
      * @var array
@@ -75,15 +75,20 @@ class FormatDropdown extends InputWidget
             $this->changeFormatUrl = ['change-format'];
         }
 
-
-        if (!$this->module) {
-            $this->module = Yii::$app->controller->module;
+        if (!$this->context) {
+            $this->context = Yii::$app->controller;
+            if (
+                !isset($this->context->textFormats) ||
+                !isset($this->context->textEditorWidgetOptions)
+            ) {
+                $this->context = Yii::$app->module;
+            }
         }
         if (
-            !isset($this->module->textFormats) ||
-            !isset($this->module->textEditorWidgetOptions)
+            !isset($this->context->textFormats) ||
+            !isset($this->context->textEditorWidgetOptions)
         ) {
-            throw new InvalidParamException('Invalid module. Add TextFormatsBehavior to module.');
+            throw new InvalidParamException('Invalid context. Add TextFormatsBehavior to module.');
         }
     }
 
@@ -92,7 +97,7 @@ class FormatDropdown extends InputWidget
         if ($this->registerClientScripts) {
             $this->registerClientScripts();
         }
-        $items = ArrayHelper::getColumn($this->module->textFormats, 'label', true);
+        $items = ArrayHelper::getColumn($this->context->textFormats, 'label', true);
         if ($this->hasModel()) {
             return Html::activeDropDownList($this->model, $this->attribute, $items, $this->options);
         } else {

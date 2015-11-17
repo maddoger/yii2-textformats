@@ -21,6 +21,11 @@ use yii\web\NotAcceptableHttpException;
 class ChangeFormatAction extends Action
 {
     /**
+     * @var \yii\base\Object
+     */
+    public $context;
+    
+    /**
      * @var string
      */
     public $view;
@@ -54,14 +59,23 @@ class ChangeFormatAction extends Action
         $format = $post[$formName][$this->textFormatField];
         $text = $post[$formName][$this->textField];
 
+        if (!$this->context) {
+            $this->context = Yii::$app->controller;
+            if (
+                !isset($this->context->textFormats) ||
+                !isset($this->context->textEditorWidgetOptions)
+            ) {
+                $this->context = Yii::$app->module;
+            }
+        }
         if (
-            !isset($this->controller->module->textFormats) ||
-            !isset($this->controller->module->textEditorWidgetOptions)
+            !isset($this->context->textFormats) ||
+            !isset($this->context->textEditorWidgetOptions)
         ) {
-            throw new InvalidParamException('Invalid module. Add TextFormatsBehavior to module.');
+            throw new InvalidParamException('Invalid context. Add TextFormatsBehavior to module.');
         }
 
-        $formats = $this->controller->module->textFormats;
+        $formats = $this->context->textFormats;
 
         if (!isset($formats[$format])) {
             throw new InvalidParamException('Format not found.');
@@ -71,7 +85,7 @@ class ChangeFormatAction extends Action
             'fieldName' => $formName . '['.$this->textField .']',
             'text' => $text,
             'formatInfo' => $formats[$format],
-            'widgetOptions' => $this->controller->module->textEditorWidgetOptions,
+            'widgetOptions' => $this->context->textEditorWidgetOptions,
         ];
 
         if ($this->view) {

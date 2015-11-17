@@ -29,11 +29,11 @@ class TextEditor extends InputWidget
      * @var string|array
      */
     public $format;
-
+    
     /**
-     * @var \yii\base\Module
+     * @var \yii\base\Object
      */
-    public $module;
+    public $context;
 
     /**
      * @var array
@@ -59,20 +59,27 @@ class TextEditor extends InputWidget
         if (!$this->format && $this->hasModel() && $this->formatAttribute) {
             $this->format = $this->model->{$this->formatAttribute};
         }
-        if (!$this->module) {
-            $this->module = Yii::$app->controller->module;
+        if (!$this->context) {
+            $this->context = Yii::$app->controller;
+            if (
+                !isset($this->context->textFormats) ||
+                !isset($this->context->textEditorWidgetOptions)
+            ) {
+                $this->context = Yii::$app->module;
+            }
         }
         if (
-            !isset($this->module->textFormats) ||
-            !isset($this->module->textEditorWidgetOptions)
+            !isset($this->context->textFormats) ||
+            !isset($this->context->textEditorWidgetOptions)
         ) {
-            throw new InvalidParamException('Invalid module. Add TextFormatsBehavior to module.');
+            throw new InvalidParamException('Invalid context. Add TextFormatsBehavior to module.');
         }
-        if ($this->format && !is_array($this->format) && $this->module) {
-            if (!isset($this->module->textFormats[$this->format])) {
+        
+        if ($this->format && !is_array($this->format) && $this->context) {
+            if (!isset($this->context->textFormats[$this->format])) {
                 throw new InvalidParamException('Format not found.');
             }
-            $this->format = $this->module->textFormats[$this->format];
+            $this->format = $this->context->textFormats[$this->format];
         }
     }
 
@@ -84,8 +91,8 @@ class TextEditor extends InputWidget
         if (isset($this->format['widgetClass'])) {
             $widgetClass = $this->format['widgetClass'];
             $options = isset($this->format['widgetOptions']) ? $this->format['widgetOptions'] : [];
-            if (isset($this->module->textEditorWidgetOptions) && !empty($this->module->textEditorWidgetOptions)) {
-                $options = ArrayHelper::merge($options, $this->module->textEditorWidgetOptions);
+            if (isset($this->context->textEditorWidgetOptions) && !empty($this->context->textEditorWidgetOptions)) {
+                $options = ArrayHelper::merge($options, $this->context->textEditorWidgetOptions);
             }
             if (!empty($this->widgetOptions)) {
                 $options = ArrayHelper::merge($options, $this->widgetOptions);
