@@ -59,18 +59,18 @@ class ChangeFormatAction extends Action
         $format = $post[$formName][$this->textFormatField];
         $text = $post[$formName][$this->textField];
 
-        if (!$this->context) {
+        if ($this->context === null) {
             $this->context = Yii::$app->controller;
             if (
-                !isset($this->context->textFormats) ||
-                !isset($this->context->textEditorWidgetOptions)
+                !($this->context->canGetProperty('textFormats')) ||
+                !($this->context->canGetProperty('textEditorWidgetOptions'))
             ) {
-                $this->context = Yii::$app->module;
+                $this->context = Yii::$app->controller->module;
             }
         }
         if (
-            !isset($this->context->textFormats) ||
-            !isset($this->context->textEditorWidgetOptions)
+            !($this->context->canGetProperty('textFormats')) ||
+            !($this->context->canGetProperty('textEditorWidgetOptions'))
         ) {
             throw new InvalidParamException('Invalid context. Add TextFormatsBehavior to module.');
         }
