@@ -9,15 +9,19 @@ use yii\helpers\Html;
 /* @var array $formatInfo */
 /* @var array $widgetOptions */
 
+$id = str_replace(['[]', '][', '[', ']', ' ', '.'], ['', '-', '-', '', '-', '-'],
+    strtolower($fieldName));
+
 if (isset($formatInfo['widgetClass'])) {
     $widgetClass = $formatInfo['widgetClass'];
     $options = isset($formatInfo['widgetOptions']) ? $formatInfo['widgetOptions'] : [];
-    if (isset($widgetOptions) &&is_array($widgetOptions) && !empty($widgetOptions)) {
+    if (isset($widgetOptions) && is_array($widgetOptions) && !empty($widgetOptions)) {
         $options = ArrayHelper::merge($options, $widgetOptions);
     }
     $options['name'] = $fieldName;
     $options['value'] = $text;
+    $options['id'] = $id;
     echo $widgetClass::widget($options);
 } else {
-    echo Html::textarea($fieldName, $text, ['class' => 'form-control', 'rows' => 20]);
+    echo Html::textarea($fieldName, $text, ['class' => 'form-control', 'rows' => 20, 'id' => $id]);
 }
